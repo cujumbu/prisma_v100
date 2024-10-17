@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -9,6 +10,7 @@ const Login: React.FC = () => {
   const [isCreatingAdmin, setIsCreatingAdmin] = useState(false);
   const navigate = useNavigate();
   const { login } = useAuth();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const checkUserExistence = async () => {
@@ -21,16 +23,16 @@ const Login: React.FC = () => {
         console.log('User existence check response:', data);
         if (!data.exists) {
           setIsCreatingAdmin(true);
-          setError('No admin user exists. Create the first admin account.');
+          setError(t('noAdminUserExists'));
         }
       } catch (error) {
         console.error('Error checking user existence:', error);
-        setError('Unable to check user existence. Please try again later.');
+        setError(t('errorCheckingUserExistence'));
       }
     };
 
     checkUserExistence();
-  }, []);
+  }, [t]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -50,9 +52,9 @@ const Login: React.FC = () => {
 
         if (response.ok) {
           setIsCreatingAdmin(false);
-          setError('Admin created successfully. Please log in.');
+          setError(t('adminCreatedSuccessfully'));
         } else {
-          setError(data.error || 'Failed to create admin user');
+          setError(data.error || t('failedToCreateAdmin'));
         }
       } else {
         const response = await fetch('/api/login', {
@@ -69,25 +71,25 @@ const Login: React.FC = () => {
           login(data);
           navigate(data.isAdmin ? '/admin' : '/status');
         } else {
-          setError(data.error || 'Invalid credentials');
+          setError(data.error || t('invalidCredentials'));
         }
       }
     } catch (error) {
       console.error('Login error:', error);
-      setError('An error occurred during login. Please try again.');
+      setError(t('loginError'));
     }
   };
 
   return (
     <div className="max-w-md mx-auto mt-8">
       <h2 className="text-2xl font-bold mb-4">
-        {isCreatingAdmin ? 'Create Admin Account' : 'Login'}
+        {isCreatingAdmin ? t('createAdminAccount') : t('login')}
       </h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-            Email
+            {t('email')}
           </label>
           <input
             type="email"
@@ -100,7 +102,7 @@ const Login: React.FC = () => {
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-            Password
+            {t('password')}
           </label>
           <input
             type="password"
@@ -115,7 +117,7 @@ const Login: React.FC = () => {
           type="submit"
           className="w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
         >
-          {isCreatingAdmin ? 'Create Admin Account' : 'Login'}
+          {isCreatingAdmin ? t('createAdminAccount') : t('login')}
         </button>
       </form>
     </div>
