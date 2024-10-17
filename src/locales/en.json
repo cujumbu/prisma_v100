@@ -1,5 +1,12 @@
 {
   "warrantyClaimsPortal": "Warranty Case Portal",
+  "noAdminUserExists": "No admin user exists. Create the first admin account.",
+  "errorCheckingUserExistence": "Unable to check user existence. The server might be unavailable.",
+  "adminCreatedSuccessfully": "Admin created successfully. Please log in.",
+  "failedToCreateAdmin": "Failed to create admin user",
+  "invalidCredentials": "Invalid credentials",
+  "loginError": "An error occurred during login. Please try again.",
+  "createAdminAccount": "Create Admin Account",
   "supportPortal": "Support Portal",
   "home": "Home",
   "newClaim": "New Warranty Case",
