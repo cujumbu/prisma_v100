@@ -120,6 +120,71 @@ app.get('/api/brands', async (req, res) => {
   }
 });
 
+app.get('/api/users/check', async (req, res) => {
+  try {
+    const userCount = await prisma.user.count();
+    res.json({ exists: userCount > 0 });
+  } catch (error) {
+    console.error('Error checking user existence:', error);
+    res.status(500).json({ error: 'Failed to check user existence' });
+  }
+});
+
+// New routes for returns
+app.post('/api/returns', async (req, res) => {
+  try {
+    const newReturn = await prisma.return.create({
+      data: {
+        ...req.body,
+        status: 'Pending'
+      }
+    });
+    res.status(201).json(newReturn);
+  } catch (error) {
+    console.error('Error creating return:', error);
+    res.status(500).json({ error: 'An error occurred while creating the return' });
+  }
+});
+
+app.get('/api/returns', async (req, res) => {
+  try {
+    const returns = await prisma.return.findMany();
+    res.json(returns);
+  } catch (error) {
+    console.error('Error fetching returns:', error);
+    res.status(500).json({ error: 'An error occurred while fetching returns' });
+  }
+});
+
+app.get('/api/returns/:id', async (req, res) => {
+  try {
+    const returnItem = await prisma.return.findUnique({
+      where: { id: req.params.id }
+    });
+    if (returnItem) {
+      res.json(returnItem);
+    } else {
+      res.status(404).json({ error: 'Return not found' });
+    }
+  } catch (error) {
+    console.error('Error fetching return:', error);
+    res.status(500).json({ error: 'An error occurred while fetching the return' });
+  }
+});
+
+app.patch('/api/returns/:id', async (req, res) => {
+  try {
+    const updatedReturn = await prisma.return.update({
+      where: { id: req.params.id },
+      data: req.body
+    });
+    res.json(updatedReturn);
+  } catch (error) {
+    console.error('Error updating return:', error);
+    res.status(500).json({ error: 'An error occurred while updating the return' });
+  }
+});
+
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
